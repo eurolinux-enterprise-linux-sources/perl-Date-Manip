@@ -1,0 +1,23 @@
+---
+name: Date-Manip
+version: 5.54
+author:
+  - 'Sullivan Beck <sbeck@cpan.org>'
+abstract: date manipulation routines
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+requires:
+  Carp: 0
+  IO::File: 0
+  perl: 5.6.0
+build_requires:
+  Test::More: 0
+provides:
+  Date::Manip:
+    file: lib/Date/Manip.pm
+    version: 5.54
+generated_by: Module::Build version 0.2808
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
