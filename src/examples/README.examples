@@ -1,96 +1,28 @@
-Please refer to the ../t directory for examples of how to use this
-module.
+If you have Date::Manip 5.xx installed (which is the case if you
+have a perl version less than 5.010), the examples are included
+in the Date::Manip man page.
 
-The tests are organized fairly simply. In each .t file (except for
-pod and pod_coverage) is a line of the form:
+If you have Date::Manip 6.xx installed, examples are included
+in the Date::Manip::Examples man page, and in this directory.
 
-  test_Func(\&FUNC,$tests,$runtests,ARGS)
+This directory contains two scripts which use Date::Manip to
+duplicate the functionality of two common unix scripts.
 
-FUNC is the name of one of the functions available in the module,
-or some function defined in the test script which calls one or more
-of the module functions.
+The dm_date script duplicates the functionality of the unix 'date'
+command with a few differences.
 
-Also in the file are a series of tests organized as:
+   o  It does not include the functionality to set the
+      system date.
 
-   $tests = "
-   TEST1
+   o  The date strings that can be read (using the -d
+      or -f options) are anything that Date::Manip can
+      parse.
 
-   TEST2
+   o  The format string is any string suitable for passing
+      to the Date::Manip::Date::printf function.
 
-   ...
-   ";
-
-or
-
-  $tests = [
-  TEST1,
-
-  TEST2,
-
-  ... ];
-
-
-In the first case, a test is a list of strings, some of which are used
-as arguments for the function being called, and some are expected results.
-If the expected result is a simple scalar, each TEST may be a simple list
-of space separated strings, the last of which is treated as the expected
-output.
-
-For example, if the following line appears in the test script:
-
-  test_Func(\&somefunc,$tests,$runtests);
-
-and one of the tests is:
-
-  A B C
-
-then the following behavior is expected:
-
-  somefunc(A,B)
-     => C
-
-The list of strings may also be given on separate lines as:
-
-  A
-  B
-  C
-
-If the expected results are a list of values, then the arguments
-to the function and the expected results are separated by a tilde (~).
-So if the following behavior is expected:
-
-  somefunc(A,B)
-     => (C,D)
-
-the test could be written in either of the following ways:
-
-  A B ~ C D
-
-  A
-  B
-  ~
-  C
-  D
-
-In all cases, leading spaces are ignored. Also, the strings may include
-spaces if (and only if) they are given one per line.
-
-Two special strings "_undef_" and "_blank_" may be included in the list
-to have the values undef or "" repectively included as either an argument
-or an expected return value.
-
-
-In the second method of entering tests, tests are given as a list reference
-with two values. The first is a list reference containing arguments, and
-the second is a list reference containing the expected return value(s). The
-expected values should be simple strings.
-
-So, a test could be entered as:
-
-  [ [ qw(A B) ],
-    [ qw(C D) ] ]
-
-and be equivalent to:
-
-  A B ~ C D
-
+The dm_zdump duplicates the functionality of the unix 'zdump'
+command. This should be a drop-in replacement for the zdump
+command except that the first two lines and the last two lines
+of zdump output do not contain any useful output. The dm_zdump
+command does not reproduce these lines.

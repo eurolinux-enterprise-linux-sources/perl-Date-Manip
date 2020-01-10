@@ -1,19 +1,27 @@
 Name:           perl-Date-Manip
-Version:        5.54
-Release:        4%{?dist}
+Version:        6.24
+Release:        1%{?dist}
 Summary:        A Perl module containing a wide variety of date manipulation routines
 
 Group:          Development/Libraries
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/Date-Manip/
 Source0:        http://www.cpan.org/authors/id/S/SB/SBECK/Date-Manip-%{version}.tar.gz
-# Mailed to sbeck@cpan.org on 2008-11-26:
-Patch0:         perl-Date-Manip-5.48-datez-rhbz248500.patch
 
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildArch:      noarch
-BuildRequires:  perl(ExtUtils::MakeMaker) perl(Test::More)
+BuildRequires:  perl(Carp)
+BuildRequires:  perl(Encode)
+BuildRequires:  perl(Exporter)
+BuildRequires:  perl(IO::File)
+# Module::Build version 0.36 in META.yml is formal only
+BuildRequires:  perl(Module::Build)
+BuildRequires:  perl(Storable)
+BuildRequires:  perl(Test::More)
+BuildRequires:  perl(YAML::Syck)
+# Tests only
+BuildRequires:  perl(Test::Inter)
 BuildRequires:  perl(Test::Pod) >= 1.00
 BuildRequires:  perl(Test::Pod::Coverage) >= 1.00
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
@@ -32,21 +40,19 @@ international times are all easily done.
 
 %prep
 %setup -q -n Date-Manip-%{version}
-%patch0 -p1
 
 %build
-%{__perl} Makefile.PL INSTALLDIRS=vendor
-make %{?_smp_mflags}
+%{__perl} Build.PL installdirs=core
+./Build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make pure_install PERL_INSTALL_ROOT=$RPM_BUILD_ROOT
-find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
-find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null ';'
+./Build install destdir=$RPM_BUILD_ROOT create_packlist=0
+find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \;
 %{_fixperms} $RPM_BUILD_ROOT/*
 
 %check
-make test
+./Build test
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -54,12 +60,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc README TODO HISTORY
-%{perl_vendorlib}/Date/
+%doc HISTORY LICENSE README README.first
+%{perl_privlib}/Date/
 %{_mandir}/man3/*.3*
 
 
 %changelog
+* Tue Jun 28 2011 Petr Pisar <ppisar@redhat.com> - 6.24-1
+- Rebase to version 6.24 (bug #672934)
+- Patch perl-Date-Manip-5.48-datez-rhbz248500.patch inlcuded in upstream
+  already.
+- Move to core Perl path to comply with RHEL Developer Guide
+
 * Mon Dec  7 2009 Stepan Kasal <skasal@redhat.com> - 5.54-4
 - rebuild against perl 5.10.1
 

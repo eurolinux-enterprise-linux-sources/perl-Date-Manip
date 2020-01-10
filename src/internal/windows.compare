@@ -1,0 +1,106 @@
+#!/usr/bin/perl
+# Copyright (c) 2008-2011 Sullivan Beck.  All rights reserved.
+# This program is free software; you can redistribute it and/or modify it
+# under the same terms as Perl itself.
+
+###############################################################################
+###############################################################################
+# This script will check windows timezone information.
+
+my $new = 'windows.new';
+require "data.alias.pl";
+
+############################################################################
+# MAIN PROGRAM
+############################################################################
+
+my %old = %windows_zones;
+my %new = _parse($new);
+
+# Find deprecated zones
+
+my @old;
+foreach my $key (keys %old) {
+   next  if (exists $new{$key});
+   push(@old,$key);
+}
+
+if (@old) {
+   print "The following zones need to be removed:\n";
+   foreach my $key (sort @old) {
+      print "   $key\n";
+      delete $old{$key};
+   }
+   print "\n";
+}
+
+# Find new zones
+
+my @new;
+foreach my $key (keys %new) {
+   next  if (exists $old{$key});
+   push(@new,$key);
+}
+
+if (@new) {
+   print "The following zones need to be added (check that the zones are in tzdata):\n";
+   foreach my $key (sort @new) {
+      my $val = $new{$key};
+      print "   \"$key\"" . " "x(32-length($key)) . "=> \"$val\",\n";
+      delete $new{$key};
+   }
+   print "\n";
+}
+
+# Find changed zones
+
+my @chg;
+foreach my $key (keys %old) {
+   next  if ($old{$key} eq $new{$key});
+   push(@chg,$key);
+}
+
+if (@chg) {
+   print "The following zones need to be changed (verify in tzdata first):\n";
+   foreach my $key (sort @chg) {
+      my $val = $new{$key};
+      print "   \"$key\"" . " "x(32-length($key)) . "=> \"$val\",\n";
+   }
+   print "\n";
+}
+
+############################################################################
+############################################################################
+
+sub _parse {
+   my($file) = @_;
+   my %ret;
+
+   my @lines = `cat $file`;
+   chomp(@lines);
+
+   my $n = 0;
+   foreach my $line (@lines) {
+      $n++;
+
+      if ($line =~ /^\s*(.*?)\s+any\s+(.*?)\s*$/) {
+         $ret{$1} = $2;
+      } else {
+         warn "ERROR: invalid line: $file[$n]\n" .
+              "       $line\n";
+      }
+   }
+
+   return %ret;
+}
+
+# Local Variables:
+# mode: cperl
+# indent-tabs-mode: nil
+# cperl-indent-level: 3
+# cperl-continued-statement-offset: 2
+# cperl-continued-brace-offset: 0
+# cperl-brace-offset: 0
+# cperl-brace-imaginary-offset: 0
+# cperl-label-offset: -2
+# End:
