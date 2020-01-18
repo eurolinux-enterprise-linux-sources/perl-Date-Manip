@@ -1,6 +1,6 @@
 Name:           perl-Date-Manip
 Version:        6.41
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Date manipulation routines
 Group:          Development/Libraries
 License:        GPL+ or Artistic
@@ -61,6 +61,9 @@ perl Build.PL installdirs=vendor
 %{_bindir}/dm_*
 
 %changelog
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 6.41-2
+- Mass rebuild 2013-12-27
+
 * Tue Sep 10 2013 Petr Šabata <contyk@redhat.com> - 6.41-1
 - 6.41 bump
 - Various bugfixes, new tzdata
